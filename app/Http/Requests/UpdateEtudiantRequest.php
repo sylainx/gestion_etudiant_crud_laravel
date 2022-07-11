@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEtudiantRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateEtudiantRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,11 @@ class UpdateEtudiantRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nom' => ['required',],
+            'prenom' => [
+                'required',
+            ],
+            'classe_id' => ['required',],
         ];
     }
 }

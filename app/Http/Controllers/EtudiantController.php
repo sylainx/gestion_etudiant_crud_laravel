@@ -20,7 +20,7 @@ class EtudiantController extends Controller
         $etudiants = Etudiant::all();
 
         return view('etudiant', [
-            'etudiants'=>$etudiants
+            'etudiants' => $etudiants
         ]);
     }
 
@@ -32,7 +32,7 @@ class EtudiantController extends Controller
     public function create()
     {
         //
-        $classes= Classe::get();
+        $classes = Classe::get();
         return view('etudiants.addEtudiant', compact('classes'));
     }
 
@@ -46,16 +46,14 @@ class EtudiantController extends Controller
     {
 
         $data = $request->validated();
-        
+
         Etudiant::create([
-            'nom'=> $request->nom,
-            'prenom'=> $request->prenom,
-            'classe_id'=> $request->classe_id,
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'classe_id' => $request->classe_id,
         ]);
-
-        // return back()->with('successAddEtudiant', 'Un etudiant a ete cree avec succes.');
-        return redirect( route('etudiant.index'))->with('successAddEtudiant', 'Un etudiant a ete cree avec succes.');
-
+        
+        return redirect(route('etudiant.index'))->with('alertEtudiant', "L'etudiant $request->nom  $request->prenom a ete cree avec succes.");
     }
 
     /**
@@ -75,9 +73,17 @@ class EtudiantController extends Controller
      * @param  \App\Models\Etudiant  $etudiant
      * @return \Illuminate\Http\Response
      */
-    public function edit(Etudiant $etudiant)
+    public function edit($id)
     {
         //
+        $etudiant = Etudiant::find($id);
+        $classes = Classe::get();
+
+
+        return view('etudiants.edit-etudiant', [
+            'etudiants' => $etudiant,
+            'classes' => $classes,
+        ]);
     }
 
     /**
@@ -87,9 +93,19 @@ class EtudiantController extends Controller
      * @param  \App\Models\Etudiant  $etudiant
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEtudiantRequest $request, Etudiant $etudiant)
+    public function update(UpdateEtudiantRequest $request, $id)
     {
         //
+        $request->validated();
+        $etudiant = Etudiant::find($id);
+        
+        $etudiant->nom = $request->nom;
+        $etudiant->prenom = $request->prenom;
+        $etudiant->classe_id = $request->classe_id;
+        
+        $etudiant->save();
+        // $nomEtudiant = $etudiant->nom.' '.$etudiant->prenom;
+        return redirect(route('etudiant.index'))->with('alertEtudiant', 'Modification effectuee avec succes.');
     }
 
     /**
@@ -98,8 +114,14 @@ class EtudiantController extends Controller
      * @param  \App\Models\Etudiant  $etudiant
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Etudiant $etudiant)
+    public function destroy($id)
     {
         //
+        $student = Etudiant::find($id);
+        $nomEtudiant = $student->nom . ' ' . $student->prenom;
+
+        $student->delete();
+
+        return redirect(route('etudiant.index'))->with('alertEtudiant', "$nomEtudiant vient d'etre supprimé.");
     }
 }

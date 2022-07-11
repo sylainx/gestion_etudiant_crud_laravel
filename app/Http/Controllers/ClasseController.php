@@ -50,7 +50,7 @@ class ClasseController extends Controller
             'libelle' => $request->libelle
         ]);
 
-        return back()->with('successAddClasse', 'Une classe a ete cree avec succes.');
+        return back()->with('alertClasse', 'Une classe a ete cree avec succes.');
     }
 
     /**
@@ -70,9 +70,13 @@ class ClasseController extends Controller
      * @param  \App\Models\Classe  $classe
      * @return \Illuminate\Http\Response
      */
-    public function edit(Classe $classe)
+    public function edit($id)
     {
-        //
+        $classe = Classe::find($id);
+
+        return view('classes.edit-classe', [
+            'classes' => $classe,
+        ]);
     }
 
     /**
@@ -82,9 +86,16 @@ class ClasseController extends Controller
      * @param  \App\Models\Classe  $classe
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateClasseRequest $request, Classe $classe)
+    public function update(UpdateClasseRequest $request, $id)
     {
         //
+        $request->validated();
+        $classe = Classe::find($id);
+        
+        $classe->libelle = $request->libelle;
+        
+        $classe->save();
+        return redirect(route('classe.index'))->with('alertClasse', 'Modification effectuee avec succes.');
     }
 
     /**
@@ -93,8 +104,13 @@ class ClasseController extends Controller
      * @param  \App\Models\Classe  $classe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Classe $classe)
+    public function destroy($id)
     {
-        //
+        $classe = Classe::find($id);
+        $nomClasse = $classe->libelle;
+
+        $classe->delete();
+
+        return redirect(route('classe.index'))->with('alertClasse', "$nomClasse vient d'etre supprimé.");
     }
 }

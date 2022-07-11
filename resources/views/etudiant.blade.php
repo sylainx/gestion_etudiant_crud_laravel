@@ -7,13 +7,13 @@
         <div class="d-flex justify-content-end mb-4">
             <a href=" {{ route('etudiant.create') }} " class="btn btn-primary">Ajouter un nouvel étudiant</a>
         </div>
-        
+
         {{-- alert success --}}
-        @if (Session::has('successAddEtudiant'))
+        @if (Session::has('alertEtudiant'))
             <div class="alert alert-success">
-                {{ Session::get('successAddEtudiant') }}
+                {{ Session::get('alertEtudiant') }}
                 @php
-                    Session::forget('successAddEtudiant');
+                    Session::forget('alertEtudiant');
                 @endphp
             </div>
         @endif
@@ -33,17 +33,24 @@
                 @forelse ($etudiants as $etudiant)
                     <tr>
                         <th scope="row"> {{ $etudiant->id }}</th>
-                        <td>{{ $etudiant->nom}}</td>
-                        <td>{{ $etudiant->prenom}}</td>
-                        <td>{{ $etudiant->classe_id}}</td>
+                        <td>{{ $etudiant->nom }}</td>
+                        <td>{{ $etudiant->prenom }}</td>
+                        <td>{{ $etudiant->classe->libelle }}</td>
                         <td>
-                            <a href="#" class="btn btn-info">Editer</a>
-                            <a href="#" class="btn btn-danger">Supprimer</a>
+                            <div class="">
+                                <a href=" {{ route('etudiant.edit', [$etudiant->id] ) }}" class="btn btn-info">Edit</a>
+                                <form action="{{ route('etudiant.destroy', [$etudiant->id]) }}" method="POST" class="d-inline mx-3">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger">Supprimer </button>
+                                </form>
+                            </div>
+
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center my-4 text-bold">Pas d'etudiant</td>
+                        <td colspan="5" class="text-center fw-bold">Pas d'etudiants</td>
                     </tr>
                 @endforelse
 

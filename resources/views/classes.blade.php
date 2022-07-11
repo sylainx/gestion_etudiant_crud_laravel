@@ -12,11 +12,11 @@
             </button>
         </div>
 
-        @if (Session::has('successAddClasse'))
+        @if (Session::has('alertClasse'))
             <div class="alert alert-success">
-                {{ Session::get('successAddClasse') }}
+                {{ Session::get('alertClasse') }}
                 @php
-                    Session::forget('successAddClasse');
+                    Session::forget('alertClasse');
                 @endphp
             </div>
         @endif
@@ -35,8 +35,14 @@
                         <th scope="row"> {{ $classe->id }}</th>
                         <td style="3rem">{{ $classe->libelle }}</td>
                         <td>
-                            <a href="#" class="btn btn-info">Editer</a>
-                            <a href="#" class="btn btn-danger">Supprimer</a>
+                            <div class="">
+                                <a href=" {{ route('classe.edit', [$classe->id] ) }}" class="btn btn-info">Edit</a>
+                                <form action="{{ route('classe.destroy', [$classe->id]) }}" method="POST" class="d-inline mx-3">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger">Supprimer </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty
